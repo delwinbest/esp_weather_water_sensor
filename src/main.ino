@@ -92,7 +92,7 @@
 #define PRODUCT "SOLAR Thermometer"
 #define HOME_ASSISTANT_DISCOVERY 1
 #define ESP12_BLUE_LED_ALWAYS_ON 1
-#define USE_MULTIPLE_STATUS_TOPICS
+//#define USE_MULTIPLE_STATUS_TOPICS
 
 Adafruit_BME280 bme;             // I2C
 WiFiUDP udp;
@@ -787,6 +787,44 @@ void setup() {
   Serial.print("Home Assistant sensor name: ");
   Serial.println(machineId);
 #endif
+
+  // MQTT
+#ifdef MQTT_SERVER
+  Serial.print("Hardcoded MQTT Server: ");
+  Serial.println(MQTT_SERVER);
+#else
+  Serial.print("MQTT Server: ");
+  Serial.println(mqtt_server);
+#endif
+  Serial.print("MQTT Port: ");
+  Serial.println(mqtt_port);
+  // Print MQTT Username
+  if (mqtt_username() != 0)
+  {
+      Serial.print("MQTT Username: ");
+      Serial.println(mqtt_username());
+  }
+  else
+  {
+      Serial.println("No MQTT username");
+  }
+
+  if (mqtt_password() != 0)
+  {
+      // Hide password from the log and show * instead
+      char hiddenpass[20] = "";
+      for (size_t charP=0; charP < strlen(mqtt_password()); charP++)
+      {
+          hiddenpass[charP] = '*';
+      }
+      hiddenpass[strlen(password)] = '\0';
+      Serial.print("MQTT Password: ");
+      Serial.println(hiddenpass);
+  }
+  else
+  {
+      Serial.println("No MQTT password");
+  }
 
   setup_mqtt(mqtt_server, mqtt_port);
 
